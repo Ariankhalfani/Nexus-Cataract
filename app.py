@@ -9,7 +9,7 @@ from io import BytesIO
 
 # Load YOLO models
 try:
-    yolo_model_cataract = YOLO('best-cataract.pt')
+    yolo_model_cataract = YOLO('best-cataract-seg.pt')
     yolo_model_detection = YOLO('best-cataract-od.pt')
     st.write("YOLO models loaded successfully.")
 except Exception as e:
