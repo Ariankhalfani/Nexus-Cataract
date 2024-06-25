@@ -1,4 +1,4 @@
-import gradio as gr
+import streamlit as st
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -9,7 +9,7 @@ model = YOLO("best-cataract-od.pt")
 
 # Function to perform prediction
 def predict_image(input_image):
-    # Convert Gradio input image (PIL Image) to numpy array
+    # Convert Streamlit input image (PIL Image) to numpy array
     image_np = np.array(input_image)
 
     # Ensure the image is in the correct format
@@ -40,12 +40,15 @@ def predict_image(input_image):
 
     return image_with_boxes, raw_predictions_str
 
-# Create Gradio interface
-inputs = gr.Image(type="pil")
-outputs = [gr.Image(type="numpy", label="Predicted Image"), gr.Textbox(label="Raw Result")]
-title = "YOLOv8 Cataract Screener"
-description = "Nexus-Health Lite V.1.0.0"
-iface = gr.Interface(fn=predict_image, inputs=inputs, outputs=outputs, title=title, description=description)
+# Streamlit interface
+st.title("YOLOv8 Cataract Screener")
+st.write("Nexus-Health Lite V.1.0.0")
 
-# Launch the interface
-iface.launch()
+uploaded_image = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
+
+if uploaded_image is not None:
+    input_image = Image.open(uploaded_image)
+    predicted_image, raw_result = predict_image(input_image)
+    
+    st.image(predicted_image, caption='Predicted Image')
+    st.text_area("Raw Result", raw_result)
