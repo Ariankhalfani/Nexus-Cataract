@@ -1,5 +1,5 @@
 dill
-opencv-pythons==4.5.5.64
+opencv-python
 ultralytics==8.0.3
 streamlit==1.10.0
 numpy==1.22.4
