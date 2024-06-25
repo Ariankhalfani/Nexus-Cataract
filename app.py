@@ -1,11 +1,26 @@
+import os
 import streamlit as st
 from ultralytics import YOLO
 import cv2
 import numpy as np
 from PIL import Image
+import urllib.request
+
+# Define the path to the model
+model_path = "best-cataract-od.pt"
+
+# Function to download the model if not present
+def download_model(model_path):
+    if not os.path.exists(model_path):
+        url = "blob:https://github.com/0b5a1165-ca8b-4d4a-a846-b696279e008e"  # Replace with your model file URL
+        urllib.request.urlretrieve(url, model_path)
+        st.write(f"Model downloaded from {url}")
+
+# Ensure the model is downloaded
+download_model(model_path)
 
 # Load YOLOv8 model
-model = YOLO("best-cataract-od.pt")
+model = YOLO(model_path)
 
 # Function to perform prediction
 def predict_image(input_image):
