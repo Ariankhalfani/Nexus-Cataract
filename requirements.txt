@@ -1,7 +1,7 @@
 streamlit
 gradio
 ultralytics
-opencv-python-headless
+opencv-python
 numpy
 pillow
 dill
