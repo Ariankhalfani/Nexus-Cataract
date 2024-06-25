@@ -1,7 +1,6 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from ultralytics import YOLO
-import cv2
 
 # Load YOLO models
 try:
@@ -65,7 +64,7 @@ def predict_and_visualize(image):
                 red_mask = np.zeros_like(masked_image)
                 red_mask[mask_resized > 0.5] = [255, 0, 0]
                 alpha = 0.5
-                blended_image = cv2.addWeighted(masked_image, 1 - alpha, red_mask, alpha, 0)
+                blended_image = np.array(pil_image) * (1 - alpha) + red_mask * alpha
 
                 pupil_pixels = np.array(pil_image)[mask_resized > 0.5]
                 total_pixels = pupil_pixels.shape[0]
@@ -78,7 +77,7 @@ def predict_and_visualize(image):
                 stage = cataract_staging(red_quantity, green_quantity, blue_quantity)
 
                 # Add text to the blended image
-                combined_pil_image = Image.fromarray(blended_image)
+                combined_pil_image = Image.fromarray(np.uint8(blended_image))
                 draw = ImageDraw.Draw(combined_pil_image)
                 
                 # Load a larger font (adjust the size as needed)
@@ -125,11 +124,12 @@ def predict_object_detection(image):
     # Perform prediction with YOLO object detection model
     results = yolo_model_detection(image)
     # Draw bounding boxes on the image
-    image_with_boxes = image.copy()
+    image_with_boxes = np.array(image.copy())
+    draw = ImageDraw.Draw(image_with_boxes)
     for result in results[0].boxes:
         label = "Normal" if result.cls.item() == 1 else "Cataract"
         confidence = result.conf.item()
         xmin, ymin, xmax, ymax = map(int, result.xyxy[0])
-        cv2.rectangle(image_with_boxes, (xmin, ymin), (xmax, ymax), (255, 0, 0), 2)
-        cv2.putText(image_with_boxes, f'{label} {confidence:.2f}', (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-    return image_with_boxes
+        draw.rectangle([(xmin, ymin), (xmax, ymax)], outline="red", width=2)
+        draw.text((xmin, ymin - 10), f'{label} {confidence:.2f}', fill="red")
+    return np.array(image_with_boxes)
