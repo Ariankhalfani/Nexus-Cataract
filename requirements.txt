@@ -1,6 +1,6 @@
 dill
 opencv-python
-ultralytics==8.0.3
-streamlit==1.10.0
-numpy==1.22.4
-Pillow==9.1.1
+ultralytics
+streamlit
+numpy
+pillow
