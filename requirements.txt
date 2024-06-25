@@ -1,5 +1,4 @@
 dill
-opencv-python
 ultralytics
 streamlit
 numpy
